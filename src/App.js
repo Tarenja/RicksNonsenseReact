@@ -1,23 +1,31 @@
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
+import Characters from './components/Characters';
+import axios from 'axios';
 import './App.css';
 
 function App() {
+  const [characters, setCharacters] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    const fetchCharacters = async () => {
+      setLoading(true);
+      const res = await axios.get('https://rickandmortyapi.com/api/character/');
+      setCharacters(res.data.results);
+      setTotalPages(res.data.info.pages);
+      setLoading(false);
+    }
+
+    fetchCharacters();
+  }, []);
+
+  console.log(characters)
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1 className="page-title">Rick's Biographical Nonsense</h1>
+      <Characters characters={characters} loading={loading} />
     </div>
   );
 }
